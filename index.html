@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparador de Capitalización | vetmail.vet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Comparador de Capitalización Cripto</h1>
+        <p>¿Cuánto valdría una criptomoneda si tuviera la capitalización de Bitcoin?</p>
+        
+        <div class="form-group">
+            <label for="crypto-select">Selecciona una criptomoneda:</label>
+            <select id="crypto-select">
+                <option value="">Cargando criptomonedas...</option>
+            </select>
+        </div>
+        
+        <div class="results">
+            <h2>Resultados</h2>
+            <p>Capitalización actual de Bitcoin: <span id="btc-marketcap">$--</span></p>
+            <p>Capitalización actual seleccionada: <span id="current-marketcap">$--</span></p>
+            <p>Precio actual: <span id="current-price">$--</span></p>
+            <p class="highlight">Precio con capitalización de Bitcoin: <span id="hypothetical-price">$--</span></p>
+        </div>
+        
+        <div class="footer">
+            <p>Datos en tiempo real proporcionados por CoinGecko API</p>
+            <p>© 2023 vetmail.vet</p>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
