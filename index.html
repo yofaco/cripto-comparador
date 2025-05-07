@@ -3,21 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comparador Crypto | Capitalización vs Bitcoin</title>
+    <title>Comparador Crypto Pro | Capitalización vs Bitcoin</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1><i class="fas fa-chart-line"></i> Comparador Crypto</h1>
-            <p class="subtitle">¿Cuánto valdría si tuviera el mercado de Bitcoin?</p>
+            <h1><i class="fas fa-coins"></i> Comparador Crypto Pro</h1>
+            <p class="subtitle">Simula el precio con la capitalización de Bitcoin</p>
         </header>
 
         <div class="search-container">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="crypto-search" placeholder="Busca una criptomoneda (Ej: Bitcoin, XRP, ETH...)">
+                <input type="text" id="crypto-search" placeholder="Busca (BTC, ETH, XRP, SOL...)">
+                <button id="random-btn" class="action-btn" title="Cripto aleatoria">
+                    <i class="fas fa-random"></i>
+                </button>
+                <button id="top10-btn" class="action-btn" title="Top 10 Criptos">
+                    <i class="fas fa-list-ol"></i>
+                </button>
             </div>
             <div class="search-results" id="search-results"></div>
         </div>
@@ -25,6 +32,9 @@
         <div class="card results-card">
             <div class="card-header">
                 <h2><i class="fas fa-calculator"></i> Resultados</h2>
+                <button id="refresh-btn" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
             </div>
             <div class="card-body">
                 <div class="result-item">
@@ -43,16 +53,32 @@
                     <span class="label">Precio con capitalización BTC:</span>
                     <span class="value" id="hypothetical-price">--</span>
                 </div>
+                <div class="result-item">
+                    <span class="label">Multiplicador:</span>
+                    <span class="value" id="multiplier">--x</span>
+                </div>
             </div>
         </div>
 
+        <div class="button-group">
+            <button id="compare-btn" class="primary-btn">
+                <i class="fas fa-exchange-alt"></i> Comparar con otra
+            </button>
+            <button id="share-btn" class="secondary-btn">
+                <i class="fas fa-share-alt"></i> Compartir
+            </button>
+        </div>
+
         <div class="info-box">
-            <p><i class="fas fa-info-circle"></i> Esta herramienta calcula cuánto valdría una criptomoneda si tuviera la capitalización de mercado de Bitcoin.</p>
+            <p><i class="fas fa-lightbulb"></i> <strong>¿Cómo funciona?</strong> Esta herramienta calcula cuánto valdría una criptomoneda si tuviera la misma capitalización de mercado que Bitcoin.</p>
         </div>
     </div>
 
     <footer class="footer">
-        <p>Datos proporcionados por CoinGecko API</p>
+        <div class="api-badge">
+            <span class="coinapi">CoinGecko API</span>
+            <span class="coinapi">CoinMarketCap API</span>
+        </div>
         <p><i class="far fa-clock"></i> Actualizado: <span id="update-time"></span></p>
     </footer>
 
