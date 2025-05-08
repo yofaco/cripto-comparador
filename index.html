@@ -63,8 +63,8 @@
     <button id="donateBtn"><i class="fas fa-donate"></i> Donar</button>
     <div class="donation-dropdown">
         <div class="dropdown-header">
-            <h4><i class="fas fa-heart"></i> ¿Te gustó nuestra herramienta?</h4>
-            <p>Dejanos algo para un cafe y ayúdanos a seguir mejorando...</p>
+            <h4><i class="fas fa-heart"></i> Apoya nuestro proyecto</h4>
+            <p>Haz clic en cualquier QR para ampliarlo</p>
         </div>
         
         <div class="wallet-list">
@@ -73,6 +73,10 @@
                 <div class="crypto-icon btc"></div>
                 <div class="wallet-info">
                     <span class="crypto-name">Bitcoin (BTC)</span>
+                    <div class="qr-container">
+                        <span class="qr-label">Mostrar QR</span>
+                        <img src="images/qr_btc.png" alt="Bitcoin QR" class="qr-code">
+                    </div>
                     <div class="wallet-address-container">
                         <code class="wallet-address">17JU6K84Jve8qe65D5L6avwrp9UaVLN4FB</code>
                         <button class="copy-btn" data-address="17JU6K84Jve8qe65D5L6avwrp9UaVLN4FB">
@@ -87,6 +91,10 @@
                 <div class="crypto-icon eth"></div>
                 <div class="wallet-info">
                     <span class="crypto-name">Ethereum (ETH)</span>
+                    <div class="qr-container">
+                        <span class="qr-label">Mostrar QR</span>
+                        <img src="images/qr_eth.png" alt="Ethereum QR" class="qr-code">
+                    </div>
                     <div class="wallet-address-container">
                         <code class="wallet-address">0xac20df6f5d1ced86591b6f6024f7269730f6c8ad</code>
                         <button class="copy-btn" data-address="0xac20df6f5d1ced86591b6f6024f7269730f6c8ad">
@@ -101,6 +109,10 @@
                 <div class="crypto-icon sol"></div>
                 <div class="wallet-info">
                     <span class="crypto-name">Solana (SOL)</span>
+                    <div class="qr-container">
+                        <span class="qr-label">Mostrar QR</span>
+                        <img src="images/qr_sol.png" alt="Solana QR" class="qr-code">
+                    </div>
                     <div class="wallet-address-container">
                         <code class="wallet-address">7rDdK3MePXAFqEtL8u1dttB1jy3r2MeS54FhU3TbdE3J</code>
                         <button class="copy-btn" data-address="7rDdK3MePXAFqEtL8u1dttB1jy3r2MeS54FhU3TbdE3J">
@@ -115,6 +127,10 @@
                 <div class="crypto-icon xrp"></div>
                 <div class="wallet-info">
                     <span class="crypto-name">XRP</span>
+                    <div class="qr-container">
+                        <span class="qr-label">Mostrar QR</span>
+                        <img src="images/qr_xrp.png" alt="XRP QR" class="qr-code">
+                    </div>
                     <div class="wallet-address-container">
                         <code class="wallet-address">rNxp4h8apvRis6mJf9Sh8C6iRxfrDWN7AV</code>
                         <span class="memo">MEMO: 431468634</span>
@@ -130,6 +146,10 @@
                 <div class="crypto-icon usdt"></div>
                 <div class="wallet-info">
                     <span class="crypto-name">USDT</span>
+                    <div class="qr-container">
+                        <span class="qr-label">Mostrar QR</span>
+                        <img src="images/qr_usdt.png" alt="USDT QR" class="qr-code">
+                    </div>
                     <div class="wallet-address-container">
                         <code class="wallet-address">0xac20df6f5d1ced86591b6f6024f7269730f6c8ad</code>
                         <button class="copy-btn" data-address="0xac20df6f5d1ced86591b6f6024f7269730f6c8ad">
@@ -150,6 +170,10 @@
                 <div class="crypto-icon shib"></div>
                 <div class="wallet-info">
                     <span class="crypto-name">SHIB</span>
+                    <div class="qr-container">
+                        <span class="qr-label">Mostrar QR</span>
+                        <img src="images/qr_shib.png" alt="SHIB QR" class="qr-code">
+                    </div>
                     <div class="wallet-address-container">
                         <code class="wallet-address">0xac20df6f5d1ced86591b6f6024f7269730f6c8ad</code>
                         <button class="copy-btn" data-address="0xac20df6f5d1ced86591b6f6024f7269730f6c8ad">
@@ -164,6 +188,10 @@
                 <div class="crypto-icon doge"></div>
                 <div class="wallet-info">
                     <span class="crypto-name">DOGE</span>
+                    <div class="qr-container">
+                        <span class="qr-label">Mostrar QR</span>
+                        <img src="images/qr_doge.png" alt="DOGE QR" class="qr-code">
+                    </div>
                     <div class="wallet-address-container">
                         <code class="wallet-address">DFsRWNy4jVp8KGFWAbS9dfvefcjtay7oSi</code>
                         <button class="copy-btn" data-address="DFsRWNy4jVp8KGFWAbS9dfvefcjtay7oSi">
@@ -173,6 +201,15 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Modal para QR ampliado -->
+<div class="qr-modal" id="qrModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <img id="modalQrImage" src="" alt="QR Ampliado">
+        <p id="modalCryptoName"></p>
     </div>
 </div>
 </body>
