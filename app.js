@@ -1,89 +1,92 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     // Elementos del DOM
-    const cryptoSearch = document.getElementById("crypto-search");
-    const searchResults = document.getElementById("search-results");
-    const btcMarketCapEl = document.getElementById("btc-marketcap");
-    const currentMarketCapEl = document.getElementById("current-marketcap");
-    const currentPriceEl = document.getElementById("current-price");
-    const hypotheticalPriceEl = document.getElementById("hypothetical-price");
-    const updateTimeEl = document.getElementById("update-time");
+    const elements = {
+        search: document.getElementById("crypto-search"),
+        results: document.getElementById("search-results"),
+        btcMarketCap: document.getElementById("btc-marketcap"),
+        currentMarketCap: document.getElementById("current-marketcap"),
+        currentPrice: document.getElementById("current-price"),
+        hypotheticalPrice: document.getElementById("hypothetical-price"),
+        updateTime: document.getElementById("update-time")
+    };
 
     // Estado de la aplicación
-    let btcMarketCap = 0;
-    let allCryptos = [];
-    let isLoading = false;
+    let state = {
+        btcMarketCap: 0,
+        allCryptos: [],
+        loading: false
+    };
 
     // Inicialización
-    init();
-
-    async function init() {
-        try {
-            isLoading = true;
-            showLoading(true);
-            await fetchCryptoData();
-            setupEventListeners();
-            updateDateTime();
-        } catch (error) {
-            showError('Error al cargar datos. Por favor recarga la página.');
-            console.error('Error de inicialización:', error);
-        } finally {
-            isLoading = false;
-            showLoading(false);
+    try {
+        state.loading = true;
+        showLoading(true);
+        
+        // Cargar datos
+        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100');
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        state.allCryptos = data;
+        
+        // Obtener datos de Bitcoin
+        const bitcoin = data.find(c => c.id === 'bitcoin');
+        if (bitcoin) {
+            state.btcMarketCap = bitcoin.market_cap;
+            elements.btcMarketCap.textContent = formatCurrency(bitcoin.market_cap);
         }
+        
+        // Configurar eventos
+        elements.search.addEventListener("input", handleSearch);
+        updateDateTime();
+        
+    } catch (error) {
+        console.error("Error:", error);
+        showError("Error al cargar datos. Intenta recargar la página.");
+    } finally {
+        state.loading = false;
+        showLoading(false);
     }
 
-    // Configurar event listeners
-    function setupEventListeners() {
-        cryptoSearch.addEventListener("input", function() {
-            const searchTerm = this.value.toLowerCase();
-            if (searchTerm.length > 2) {
-                filterCryptos(searchTerm);
-            } else {
-                clearSearchResults();
-            }
-        });
+    function handleSearch() {
+        const term = this.value.toLowerCase().trim();
+        if (term.length < 2) {
+            elements.results.style.display = "none";
+            return;
+        }
+        
+        const results = state.allCryptos.filter(crypto => 
+            crypto.name.toLowerCase().includes(term) || 
+            crypto.symbol.toLowerCase().includes(term)
+        ).slice(0, 5);
+        
+        displayResults(results);
     }
 
-    // Filtrar criptomonedas
-    function filterCryptos(searchTerm) {
-        const filtered = allCryptos.filter(crypto => 
-            crypto.name.toLowerCase().includes(searchTerm) || 
-            crypto.symbol.toLowerCase().includes(searchTerm)
-        );
-        displaySearchResults(filtered.slice(0, 10));
-    }
-
-    // Mostrar resultados
-    function displaySearchResults(results) {
-        searchResults.innerHTML = results.map(crypto => `
-            <div class="search-result-item" data-id="${crypto.id}">
-                ${crypto.name} (${crypto.symbol.toUpperCase()})
+    function displayResults(results) {
+        elements.results.innerHTML = results.map(crypto => `
+            <div class="result-item" data-id="${crypto.id}">
+                ${crypto.name} (${crypto.symbol.toUpperCase()}) - ${formatCurrency(crypto.current_price)}
             </div>
         `).join("");
-        searchResults.style.display = "block";
-    }
-
-    // Limpiar resultados
-    function clearSearchResults() {
-        searchResults.style.display = "none";
-    }
-
-    // Obtener datos de la API
-    async function fetchCryptoData() {
-        const response = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100");
-        const data = await response.json();
         
-        // Encontrar Bitcoin
-        const bitcoin = data.find(c => c.id === "bitcoin");
-        if (bitcoin) {
-            btcMarketCap = bitcoin.market_cap;
-            btcMarketCapEl.textContent = formatCurrency(btcMarketCap);
-        }
-        
-        allCryptos = data;
+        elements.results.style.display = "block";
     }
 
-    // Mostrar loading
+    function formatCurrency(value) {
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 6
+        }).format(value);
+    }
+
+    function updateDateTime() {
+        elements.updateTime.textContent = new Date().toLocaleString();
+    }
+
     function showLoading(show) {
         const loader = document.getElementById("loader") || createLoader();
         loader.style.display = show ? "block" : "none";
@@ -97,21 +100,11 @@ document.addEventListener("DOMContentLoaded", function() {
         return loader;
     }
 
-    // Mostrar errores
     function showError(message) {
-        alert(message); // Puedes reemplazar esto con un mejor sistema de notificaciones
-    }
-
-    // Formatear moneda
-    function formatCurrency(value) {
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD"
-        }).format(value);
-    }
-
-    // Actualizar fecha/hora
-    function updateDateTime() {
-        updateTimeEl.textContent = new Date().toLocaleString();
+        const errorEl = document.createElement("div");
+        errorEl.className = "error-message";
+        errorEl.textContent = message;
+        document.body.appendChild(errorEl);
+        setTimeout(() => errorEl.remove(), 5000);
     }
 });
