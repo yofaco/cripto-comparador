@@ -242,12 +242,12 @@ body {
 .donation-container {
   position: fixed;
   top: 20px;
-  right: 20px;
+  right: 30px;
   z-index: 1000;
 }
 
 .donation-btn {
-  background-color: #ff4757;
+  background-color: #000051;
   color: white;
   border: none;
   padding: 10px 15px;
