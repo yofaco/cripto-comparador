@@ -358,21 +358,48 @@ body {
 .close-btn:hover {
   color: #333;
 }
-/* Estilo para las direcciones clickeables */
+/* Estilos para copiado de wallets */
+.wallet-address {
+  display: inline-block;
+  position: relative;
+}
+
 .copy-wallet {
   cursor: pointer;
   padding: 2px 5px;
   border-radius: 3px;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  position: relative;
+  display: inline-block;
 }
 
 .copy-wallet:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(26, 35, 126, 0.1);
 }
 
 .copy-wallet.copied {
   background-color: #1a237e;
   color: white;
+}
+
+.copy-tooltip {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a237e;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.copy-wallet:hover .copy-tooltip {
+  opacity: 1;
 }
 
 /* Notificación de copiado */
@@ -383,10 +410,12 @@ body {
   transform: translateX(-50%);
   background: #1a237e;
   color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
   opacity: 0;
   transition: opacity 0.3s;
+  z-index: 9999;
 }
 
 .copy-notification.show {
