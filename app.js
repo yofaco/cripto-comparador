@@ -1,152 +1,170 @@
-document.addEventListener("DOMContentLoaded", async function() {
-    // Elementos del DOM
-    const elements = {
-        search: document.getElementById("crypto-search"),
-        results: document.getElementById("search-results"),
-        btcMarketCap: document.getElementById("btc-marketcap"),
-        currentMarketCap: document.getElementById("current-marketcap"),
-        currentPrice: document.getElementById("current-price"),
-        hypotheticalPrice: document.getElementById("hypothetical-price"),
-        updateTime: document.getElementById("update-time")
-    };
+// Configuración global
+const config = {
+    apiUrl: 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100'
+};
 
-    // Estado de la aplicación
-    let state = {
-        btcMarketCap: 0,
-        allCryptos: [],
-        loading: false
-    };
+// Estado de la aplicación
+const state = {
+    btcData: null,
+    cryptos: [],
+    selectedCrypto: null
+};
 
-    // Inicialización
+// Elementos del DOM
+const elements = {
+    searchInput: document.getElementById('crypto-search'),
+    resultsContainer: document.getElementById('search-results'),
+    btcMarketCap: document.getElementById('btc-marketcap'),
+    currentMarketCap: document.getElementById('current-marketcap'),
+    currentPrice: document.getElementById('current-price'),
+    hypotheticalPrice: document.getElementById('hypothetical-price'),
+    updateTime: document.getElementById('update-time')
+};
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', init);
+
+async function init() {
     try {
-        state.loading = true;
         showLoading(true);
-        
-        // Cargar datos
-        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100');
-        
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const data = await response.json();
-        state.allCryptos = data;
-        
-        // Obtener datos de Bitcoin
-        const bitcoin = data.find(c => c.id === 'bitcoin');
-        if (bitcoin) {
-            state.btcMarketCap = bitcoin.market_cap;
-            elements.btcMarketCap.textContent = formatCurrency(bitcoin.market_cap);
-        }
-        
-        // Configurar eventos
-        elements.search.addEventListener("input", handleSearch);
-        updateDateTime();
-        
+        await loadData();
+        setupEventListeners();
+        updateUI();
     } catch (error) {
-        console.error("Error:", error);
-        showError("Error al cargar datos. Intenta recargar la página.");
+        showError('Error al cargar datos. Recarga la página.');
+        console.error('Init error:', error);
     } finally {
-        state.loading = false;
         showLoading(false);
     }
+}
 
-    function handleSearch() {
-        const term = this.value.toLowerCase().trim();
-        if (term.length < 2) {
-            elements.results.style.display = "none";
-            return;
+// Cargar datos de la API
+async function loadData() {
+    const response = await fetch(config.apiUrl);
+    if (!response.ok) throw new Error('API request failed');
+    
+    state.cryptos = await response.json();
+    state.btcData = state.cryptos.find(c => c.id === 'bitcoin');
+    
+    if (state.btcData) {
+        elements.btcMarketCap.textContent = formatCurrency(state.btcData.market_cap);
+    }
+}
+
+// Configurar eventos
+function setupEventListeners() {
+    // Evento de búsqueda
+    elements.searchInput.addEventListener('input', debounce(handleSearch, 300));
+    
+    // Delegación de eventos para los resultados
+    elements.resultsContainer.addEventListener('click', function(e) {
+        const resultItem = e.target.closest('.result-item');
+        if (resultItem) {
+            const cryptoId = resultItem.dataset.id;
+            selectCrypto(cryptoId);
         }
-        
-        const results = state.allCryptos.filter(crypto => 
-            crypto.name.toLowerCase().includes(term) || 
-            crypto.symbol.toLowerCase().includes(term)
-        ).slice(0, 5);
-        
-        displayResults(results);
-    }
+    });
+}
 
-    function displayResults(results) {
-        elements.results.innerHTML = results.map(crypto => `
-            <div class="result-item" data-id="${crypto.id}">
-                ${crypto.name} (${crypto.symbol.toUpperCase()}) - ${formatCurrency(crypto.current_price)}
-            </div>
-        `).join("");
-        
-        // Añadir event listeners a cada resultado
-        document.querySelectorAll('.result-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const cryptoId = this.getAttribute('data-id');
-                selectCrypto(cryptoId);
-            });
-        });
-        
-        elements.results.style.display = "block";
+// Manejar búsqueda
+function handleSearch() {
+    const searchTerm = this.value.trim().toLowerCase();
+    
+    if (searchTerm.length < 2) {
+        elements.resultsContainer.style.display = 'none';
+        return;
     }
+    
+    const results = state.cryptos.filter(crypto => 
+        crypto.name.toLowerCase().includes(searchTerm) || 
+        crypto.symbol.toLowerCase().includes(searchTerm)
+    ).slice(0, 5);
+    
+    displayResults(results);
+}
 
-    // Función nueva para manejar la selección
-    function selectCrypto(cryptoId) {
-        const selectedCrypto = state.allCryptos.find(c => c.id === cryptoId);
-        if (!selectedCrypto) return;
-        
-        // Ocultar resultados de búsqueda
-        elements.results.style.display = "none";
-        
-        // Actualizar el campo de búsqueda
-        elements.search.value = selectedCrypto.name;
-        
-        // Calcular valores
-        calculateResults(selectedCrypto);
-    }
+// Mostrar resultados
+function displayResults(results) {
+    elements.resultsContainer.innerHTML = results.map(crypto => `
+        <div class="result-item" data-id="${crypto.id}">
+            <strong>${crypto.name}</strong> (${crypto.symbol.toUpperCase()})
+            <span class="price">${formatCurrency(crypto.current_price)}</span>
+        </div>
+    `).join('');
+    
+    elements.resultsContainer.style.display = results.length ? 'block' : 'none';
+}
 
-    // Función nueva para realizar los cálculos
-    function calculateResults(crypto) {
-        // Actualizar valores en la UI
-        elements.currentMarketCap.textContent = formatCurrency(crypto.market_cap);
-        elements.currentPrice.textContent = formatCurrency(crypto.current_price);
-        
-        // Calcular precio hipotético
-        if (state.btcMarketCap > 0 && crypto.market_cap > 0) {
-            const hypotheticalPrice = (crypto.current_price * state.btcMarketCap) / crypto.market_cap;
-            elements.hypotheticalPrice.textContent = formatCurrency(hypotheticalPrice);
-        } else {
-            elements.hypotheticalPrice.textContent = "--";
-        }
-        
-        // Actualizar fecha/hora
-        updateDateTime();
-    }
+// Seleccionar criptomoneda
+function selectCrypto(cryptoId) {
+    state.selectedCrypto = state.cryptos.find(c => c.id === cryptoId);
+    
+    if (!state.selectedCrypto) return;
+    
+    // Actualizar UI
+    elements.searchInput.value = state.selectedCrypto.name;
+    elements.resultsContainer.style.display = 'none';
+    updateUI();
+}
 
-    function formatCurrency(value) {
-        if (!value) return "--";
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 6
-        }).format(value);
+// Actualizar toda la UI
+function updateUI() {
+    if (!state.selectedCrypto) return;
+    
+    elements.currentMarketCap.textContent = formatCurrency(state.selectedCrypto.market_cap);
+    elements.currentPrice.textContent = formatCurrency(state.selectedCrypto.current_price);
+    
+    if (state.btcData && state.selectedCrypto.market_cap > 0) {
+        const ratio = state.btcData.market_cap / state.selectedCrypto.market_cap;
+        const hypotheticalPrice = state.selectedCrypto.current_price * ratio;
+        elements.hypotheticalPrice.textContent = formatCurrency(hypotheticalPrice);
+    } else {
+        elements.hypotheticalPrice.textContent = '--';
     }
+    
+    elements.updateTime.textContent = new Date().toLocaleString();
+}
 
-    function updateDateTime() {
-        elements.updateTime.textContent = new Date().toLocaleString();
-    }
+// Función debounce para mejor performance
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
 
-    function showLoading(show) {
-        const loader = document.getElementById("loader") || createLoader();
-        loader.style.display = show ? "block" : "none";
-    }
+// Formatear moneda
+function formatCurrency(value) {
+    if (!value && value !== 0) return '--';
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 6
+    }).format(value);
+}
 
-    function createLoader() {
-        const loader = document.createElement("div");
-        loader.id = "loader";
-        loader.innerHTML = "Cargando datos...";
-        document.body.appendChild(loader);
-        return loader;
-    }
+// Mostrar loading
+function showLoading(show) {
+    const loader = document.getElementById('loader') || createLoader();
+    loader.style.display = show ? 'flex' : 'none';
+}
 
-    function showError(message) {
-        const errorEl = document.createElement("div");
-        errorEl.className = "error-message";
-        errorEl.textContent = message;
-        document.body.appendChild(errorEl);
-        setTimeout(() => errorEl.remove(), 5000);
-    }
-});
+function createLoader() {
+    const loader = document.createElement('div');
+    loader.id = 'loader';
+    loader.innerHTML = '<div class="loader-spinner"></div>';
+    document.body.appendChild(loader);
+    return loader;
+}
+
+// Mostrar errores
+function showError(message) {
+    const errorEl = document.createElement('div');
+    errorEl.className = 'error-message';
+    errorEl.textContent = message;
+    document.body.appendChild(errorEl);
+    setTimeout(() => errorEl.remove(), 5000);
+}
