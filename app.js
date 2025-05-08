@@ -169,3 +169,41 @@ function showError(message) {
     document.body.appendChild(errorEl);
     setTimeout(() => errorEl.remove(), 5000);
 }
+
+// Donation button functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const donationBtn = document.querySelector('.donation-btn');
+  const donationDropdown = document.querySelector('.donation-dropdown');
+  const qrModal = document.querySelector('.qr-modal');
+  const qrImage = document.getElementById('qr-image');
+  const closeBtn = document.querySelector('.close-btn');
+  
+  // Toggle dropdown
+  donationBtn.addEventListener('click', function() {
+    donationDropdown.style.display = donationDropdown.style.display === 'block' ? 'none' : 'block';
+  });
+  
+  // QR code click handler
+  document.querySelectorAll('.qr-link').forEach(qr => {
+    qr.addEventListener('click', function() {
+      const qrFile = this.getAttribute('data-qr');
+      qrImage.src = qrFile;
+      qrModal.style.display = 'flex';
+    });
+  });
+  
+  // Close modal
+  closeBtn.addEventListener('click', function() {
+    qrModal.style.display = 'none';
+  });
+  
+  // Close when clicking outside
+  window.addEventListener('click', function(e) {
+    if (e.target === qrModal) {
+      qrModal.style.display = 'none';
+    }
+    if (!e.target.closest('.donation-container') && e.target !== donationBtn) {
+      donationDropdown.style.display = 'none';
+    }
+  });
+});
