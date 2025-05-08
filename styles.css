@@ -237,3 +237,122 @@ body {
         padding: 15px;
     }
 }
+
+/* Estilos para donaciones */
+.donation-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.donation-btn {
+  background-color: #ff4757;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+}
+
+.donation-btn:hover {
+  background-color: #ff6b81;
+  transform: translateY(-2px);
+}
+
+.donation-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  width: 320px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border: 1px solid #eee;
+}
+
+.donation-dropdown h3 {
+  color: #1a237e;
+  margin-top: 0;
+}
+
+.crypto-wallets {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.wallet {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.wallet:last-child {
+  border-bottom: none;
+}
+
+.qr-link {
+  display: inline-block;
+  background: #1a237e;
+  color: white;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  line-height: 25px;
+  border-radius: 50%;
+  margin-right: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.qr-link:hover {
+  background: #00acc1;
+  transform: scale(1.1);
+}
+
+/* Modal QR */
+.qr-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+.qr-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+}
+
+.qr-modal-content img {
+  max-width: 250px;
+  max-height: 250px;
+  margin: 10px 0;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-btn:hover {
+  color: #333;
+}
