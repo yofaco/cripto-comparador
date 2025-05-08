@@ -169,3 +169,50 @@ function showError(message) {
     document.body.appendChild(errorEl);
     setTimeout(() => errorEl.remove(), 5000);
 }
+// Función mejorada para copiar direcciones
+function setupCopyButtons() {
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const address = this.getAttribute('data-address');
+            const addressElement = this.parentElement.querySelector('.wallet-address');
+            
+            try {
+                await navigator.clipboard.writeText(address);
+                
+                // Animación de copiado
+                const originalText = this.textContent;
+                this.textContent = '✓ Copiado!';
+                this.style.background = '#4CAF50';
+                
+                // Resaltar la dirección brevemente
+                addressElement.style.color = '#4CAF50';
+                addressElement.style.fontWeight = 'bold';
+                
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.style.background = '';
+                    addressElement.style.color = '';
+                    addressElement.style.fontWeight = '';
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Error al copiar:', err);
+                // Fallback para navegadores antiguos
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                this.textContent = 'Copiado (manual)';
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 2000);
+            }
+        });
+    });
+}
+
+// Llama a la función cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', setupCopyButtons);
