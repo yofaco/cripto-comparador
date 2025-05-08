@@ -71,10 +71,52 @@ document.addEventListener("DOMContentLoaded", async function() {
             </div>
         `).join("");
         
+        // Añadir event listeners a cada resultado
+        document.querySelectorAll('.result-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const cryptoId = this.getAttribute('data-id');
+                selectCrypto(cryptoId);
+            });
+        });
+        
         elements.results.style.display = "block";
     }
 
+    // Función nueva para manejar la selección
+    function selectCrypto(cryptoId) {
+        const selectedCrypto = state.allCryptos.find(c => c.id === cryptoId);
+        if (!selectedCrypto) return;
+        
+        // Ocultar resultados de búsqueda
+        elements.results.style.display = "none";
+        
+        // Actualizar el campo de búsqueda
+        elements.search.value = selectedCrypto.name;
+        
+        // Calcular valores
+        calculateResults(selectedCrypto);
+    }
+
+    // Función nueva para realizar los cálculos
+    function calculateResults(crypto) {
+        // Actualizar valores en la UI
+        elements.currentMarketCap.textContent = formatCurrency(crypto.market_cap);
+        elements.currentPrice.textContent = formatCurrency(crypto.current_price);
+        
+        // Calcular precio hipotético
+        if (state.btcMarketCap > 0 && crypto.market_cap > 0) {
+            const hypotheticalPrice = (crypto.current_price * state.btcMarketCap) / crypto.market_cap;
+            elements.hypotheticalPrice.textContent = formatCurrency(hypotheticalPrice);
+        } else {
+            elements.hypotheticalPrice.textContent = "--";
+        }
+        
+        // Actualizar fecha/hora
+        updateDateTime();
+    }
+
     function formatCurrency(value) {
+        if (!value) return "--";
         return new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
