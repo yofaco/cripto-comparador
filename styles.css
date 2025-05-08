@@ -439,3 +439,111 @@ body {
         font-size: 0.9rem;
     }
 }
+/* [Mantén todos los estilos anteriores y añade estos] */
+
+/* Contenedor QR */
+.qr-container {
+    position: relative;
+    margin: 10px 0;
+    cursor: pointer;
+    text-align: center;
+}
+
+.qr-label {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    transition: all 0.3s;
+}
+
+.qr-container:hover .qr-label {
+    background: var(--primary-dark);
+}
+
+.qr-code {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    display: none;
+    margin: 0 auto;
+}
+
+.qr-container.active .qr-code {
+    display: block;
+}
+
+.qr-container.active .qr-label {
+    display: none;
+}
+
+/* Modal QR */
+.qr-modal {
+    display: none;
+    position: fixed;
+    z-index: 1002;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+}
+
+#modalQrImage {
+    max-width: 80%;
+    max-height: 70vh;
+    border: 10px solid white;
+    border-radius: 15px;
+}
+
+#modalCryptoName {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: var(--highlight);
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* Ajustes para móviles */
+@media (max-width: 600px) {
+    .qr-code {
+        width: 80px;
+        height: 80px;
+    }
+    
+    #modalQrImage {
+        max-width: 95%;
+    }
+}
