@@ -209,33 +209,72 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Función para copiar al portapapeles
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text)
-    .then(() => showCopyNotification())
-    .catch(err => console.error('Error al copiar:', err));
+async function copyToClipboard(text) {
+  try {
+    // Método moderno (funciona en HTTPS)
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    console.log('Método moderno falló, intentando fallback...');
+    try {
+      // Método alternativo para navegadores antiguos o HTTP
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      // Soporte para dispositivos móviles
+      if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
+        textarea.setSelectionRange(0, 999999);
+      }
+      
+      const result = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      return result;
+    } catch (fallbackErr) {
+      console.error('Fallback también falló:', fallbackErr);
+      return false;
+    }
+  }
 }
 
-// Mostrar notificación
+// Mostrar notificación de copiado
 function showCopyNotification() {
-  const notification = document.createElement('div');
-  notification.className = 'copy-notification show';
-  notification.textContent = '¡Dirección copiada!';
-  document.body.appendChild(notification);
+  const notification = document.querySelector('.copy-notification');
+  notification.classList.add('show');
   
   setTimeout(() => {
     notification.classList.remove('show');
-    setTimeout(() => notification.remove(), 300);
   }, 2000);
 }
 
-// Asignar evento a todas las wallets
-document.querySelectorAll('.copy-wallet').forEach(wallet => {
-  wallet.addEventListener('click', function() {
-    const walletAddress = this.getAttribute('data-wallet');
-    copyToClipboard(walletAddress);
-    
-    // Feedback visual
-    this.classList.add('copied');
-    setTimeout(() => this.classList.remove('copied'), 1000);
+// Configurar eventos de copiado
+function setupWalletCopy() {
+  document.querySelectorAll('.copy-wallet').forEach(wallet => {
+    wallet.addEventListener('click', async function() {
+      const walletAddress = this.getAttribute('data-wallet');
+      const success = await copyToClipboard(walletAddress);
+      
+      if (success) {
+        // Feedback visual
+        this.classList.add('copied');
+        showCopyNotification();
+        
+        // Quitar la clase después de 1 segundo
+        setTimeout(() => {
+          this.classList.remove('copied');
+        }, 1000);
+      } else {
+        alert('No se pudo copiar automáticamente. Por favor selecciona y copia manualmente.');
+      }
+    });
   });
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+  setupWalletCopy();
+  
+  // El resto de tu código de inicialización...
 });
