@@ -216,3 +216,68 @@ function setupCopyButtons() {
 
 // Llama a la función cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', setupCopyButtons);
+// Control del menú desplegable de donaciones
+document.addEventListener('DOMContentLoaded', function() {
+    const donateBtn = document.getElementById('donateBtn');
+    const dropdown = document.querySelector('.donation-dropdown');
+    
+    // Mostrar/ocultar al hacer clic
+    donateBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.style.opacity = dropdown.style.opacity === '1' ? '0' : '1';
+        dropdown.style.visibility = dropdown.style.visibility === 'visible' ? 'hidden' : 'visible';
+        dropdown.style.transform = dropdown.style.transform === 'translateY(0px)' ? 'translateY(10px)' : 'translateY(0px)';
+    });
+    
+    // Ocultar al hacer clic fuera
+    document.addEventListener('click', function() {
+        dropdown.style.opacity = '0';
+        dropdown.style.visibility = 'hidden';
+        dropdown.style.transform = 'translateY(10px)';
+    });
+    
+    // Evitar que se cierre al hacer clic dentro
+    dropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    
+    // Función mejorada para copiar direcciones
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const address = this.getAttribute('data-address');
+            const memo = this.getAttribute('data-memo');
+            const textToCopy = memo ? `${address} (MEMO: ${memo})` : address;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const icon = this.querySelector('i');
+                icon.classList.remove('fa-copy');
+                icon.classList.add('fa-check');
+                this.classList.add('copy-success');
+                
+                setTimeout(() => {
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-copy');
+                    this.classList.remove('copy-success');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                // Fallback para navegadores antiguos
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const icon = this.querySelector('i');
+                icon.classList.remove('fa-copy');
+                icon.classList.add('fa-check');
+                setTimeout(() => {
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-copy');
+                }, 2000);
+            });
+        });
+    });
+});
