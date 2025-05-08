@@ -142,7 +142,7 @@ function formatCurrency(value) {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
-        maximumFractionDigits: 6
+        maximumFractionDigits: digits
     }).format(value);
 }
 
