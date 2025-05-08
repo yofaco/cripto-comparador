@@ -1,214 +1,65 @@
-:root {
-    --primary: #1a237e;
-    --primary-light: #534bae;
-    --primary-dark: #000051;
-    --secondary: #f5f5f5;
-    --text: #333333;
-    --text-light: #666666;
-    --white: #ffffff;
-    --highlight: #00acc1;
-}
-
+/* Estilos generales */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--secondary);
-    color: var(--text);
     line-height: 1.6;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
+    color: #333;
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.header {
-    text-align: center;
-    margin-bottom: 30px;
-    color: var(--primary);
-}
-
-.header h1 {
-    margin: 0;
-    font-size: 2.5rem;
-}
-
-.header .subtitle {
-    color: var(--primary-light);
-    font-size: 1.1rem;
-    margin-top: 5px;
-}
-
-.search-container {
-    position: relative;
-    margin-bottom: 30px;
-}
-
-.search-box {
-    display: flex;
-    align-items: center;
-    background: var(--white);
-    border-radius: 30px;
-    padding: 10px 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 2px solid var(--primary);
-}
-
-.search-box i {
-    color: var(--primary);
-    margin-right: 10px;
-}
-
-#crypto-search {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background: transparent;
-}
-
+/* Resultados de búsqueda */
 .search-results {
-    position: absolute;
-    width: 100%;
+    display: none;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-top: 5px;
     max-height: 300px;
     overflow-y: auto;
-    background: var(--white);
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-    display: none;
-}
-
-.search-result-item {
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.search-result-item:hover {
-    background: var(--secondary);
-}
-
-.card {
-    background: var(--white);
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.card-header {
-    background: var(--primary);
-    color: var(--white);
-    padding: 15px 20px;
-}
-
-.card-header h2 {
-    margin: 0;
-    font-size: 1.3rem;
-}
-
-.card-body {
-    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .result-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
+    padding: 10px 15px;
+    cursor: pointer;
     border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.result-item:hover {
+    background-color: #f5f5f5;
 }
 
 .result-item:last-child {
     border-bottom: none;
 }
 
-.label {
-    font-weight: 600;
-    color: var(--primary-dark);
+.result-item .price {
+    float: right;
+    color: #666;
 }
 
-.value {
-    color: var(--text);
-}
-
-.highlight {
-    background-color: rgba(0, 172, 193, 0.1);
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-}
-
-.highlight .label {
-    color: var(--highlight);
-    font-size: 1.1rem;
-}
-
-.highlight .value {
-    color: var(--highlight);
-    font-size: 1.3rem;
-    font-weight: bold;
-}
-
-.info-box {
-    background: var(--white);
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid var(--highlight);
-    margin-top: 30px;
-}
-
-.info-box p {
-    margin: 0;
-    color: var(--text-light);
-}
-
-.footer {
-    text-align: center;
-    margin-top: 40px;
-    color: var(--text-light);
-    font-size: 0.9rem;
-}
-
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-    }
-    
-    .header h1 {
-        font-size: 2rem;
-    }
-    
-    .card-body {
-        padding: 15px;
-    }
-}
-/* Loader Styles */
+/* Loader */
 #loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    flex-direction: column;
+    background: rgba(255,255,255,0.8);
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    display: none;
 }
 
 .loader-spinner {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid var(--highlight);
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     animation: spin 1s linear infinite;
-    margin-bottom: 15px;
 }
 
 @keyframes spin {
@@ -216,15 +67,16 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+/* Mensajes de error */
 .error-message {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: #ff4444;
+    background: #e74c3c;
     color: white;
     padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1001;
 }
