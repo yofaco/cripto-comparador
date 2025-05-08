@@ -281,3 +281,102 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+// Control del menú desplegable y QRs
+document.addEventListener('DOMContentLoaded', function() {
+    const donateBtn = document.getElementById('donateBtn');
+    const dropdown = document.querySelector('.donation-dropdown');
+    const modal = document.getElementById('qrModal');
+    const modalImg = document.getElementById('modalQrImage');
+    const modalName = document.getElementById('modalCryptoName');
+    const closeModal = document.querySelector('.close-modal');
+    
+    // Mostrar/ocultar dropdown
+    donateBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isVisible = dropdown.style.opacity === '1';
+        dropdown.style.opacity = isVisible ? '0' : '1';
+        dropdown.style.visibility = isVisible ? 'hidden' : 'visible';
+        dropdown.style.transform = isVisible ? 'translateY(10px)' : 'translateY(0)';
+    });
+    
+    // Ocultar al hacer clic fuera
+    document.addEventListener('click', function() {
+        dropdown.style.opacity = '0';
+        dropdown.style.visibility = 'hidden';
+        dropdown.style.transform = 'translateY(10px)';
+    });
+    
+    // Control de QRs
+    document.querySelectorAll('.qr-container').forEach(container => {
+        // Mostrar/ocultar QR pequeño
+        container.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+        });
+        
+        // Mostrar QR grande al hacer clic en el QR pequeño
+        const qrImg = container.querySelector('.qr-code');
+        qrImg.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cryptoName = container.closest('.wallet-item').querySelector('.crypto-name').textContent;
+            modalImg.src = this.src;
+            modalName.textContent = cryptoName;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
+    // Cerrar modal
+    closeModal.addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    });
+    
+    // Cerrar al hacer clic fuera
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // Función para copiar direcciones (mantén la anterior)
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const address = this.getAttribute('data-address');
+            const memo = this.getAttribute('data-memo');
+            const textToCopy = memo ? `${address} (MEMO: ${memo})` : address;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const icon = this.querySelector('i');
+                icon.classList.remove('fa-copy');
+                icon.classList.add('fa-check');
+                this.classList.add('copy-success');
+                
+                setTimeout(() => {
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-copy');
+                    this.classList.remove('copy-success');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                // Fallback para navegadores antiguos
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const icon = this.querySelector('i');
+                icon.classList.remove('fa-copy');
+                icon.classList.add('fa-check');
+                setTimeout(() => {
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-copy');
+                }, 2000);
+            });
+        });
+    });
+});
