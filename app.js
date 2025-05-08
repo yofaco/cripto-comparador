@@ -216,30 +216,100 @@ function setupCopyButtons() {
 
 // Llama a la función cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', setupCopyButtons);
-// Control del menú desplegable de donaciones
+// Control del menú desplegable y QRs
 document.addEventListener('DOMContentLoaded', function() {
     const donateBtn = document.getElementById('donateBtn');
     const dropdown = document.querySelector('.donation-dropdown');
+    const modal = document.getElementById('qrModal');
+    const modalImg = document.getElementById('modalQrImage');
+    const modalName = document.getElementById('modalCryptoName');
+    const closeModal = document.querySelector('.close-modal');
     
-    // Mostrar/ocultar al hacer clic
+    // Estado del dropdown
+    let isDropdownOpen = false;
+    
+    // Mostrar/ocultar dropdown
     donateBtn.addEventListener('click', function(e) {
         e.stopPropagation();
-        dropdown.style.opacity = dropdown.style.opacity === '1' ? '0' : '1';
-        dropdown.style.visibility = dropdown.style.visibility === 'visible' ? 'hidden' : 'visible';
-        dropdown.style.transform = dropdown.style.transform === 'translateY(0px)' ? 'translateY(10px)' : 'translateY(0px)';
+        isDropdownOpen = !isDropdownOpen;
+        
+        if (isDropdownOpen) {
+            // Abrir dropdown
+            dropdown.style.opacity = '1';
+            dropdown.style.visibility = 'visible';
+            dropdown.style.transform = 'translateY(0)';
+            donateBtn.innerHTML = '<i class="fas fa-times"></i> Cerrar';
+        } else {
+            // Cerrar dropdown
+            dropdown.style.opacity = '0';
+            dropdown.style.visibility = 'hidden';
+            dropdown.style.transform = 'translateY(10px)';
+            donateBtn.innerHTML = '<i class="fas fa-donate"></i> Donar';
+            
+            // Cerrar también todos los QRs abiertos
+            document.querySelectorAll('.qr-container.active').forEach(qr => {
+                qr.classList.remove('active');
+            });
+        }
     });
     
     // Ocultar al hacer clic fuera
     document.addEventListener('click', function() {
-        dropdown.style.opacity = '0';
-        dropdown.style.visibility = 'hidden';
-        dropdown.style.transform = 'translateY(10px)';
+        if (isDropdownOpen) {
+            dropdown.style.opacity = '0';
+            dropdown.style.visibility = 'hidden';
+            dropdown.style.transform = 'translateY(10px)';
+            donateBtn.innerHTML = '<i class="fas fa-donate"></i> Donar';
+            isDropdownOpen = false;
+            
+            // Cerrar también todos los QRs abiertos
+            document.querySelectorAll('.qr-container.active').forEach(qr => {
+                qr.classList.remove('active');
+            });
+        }
     });
     
     // Evitar que se cierre al hacer clic dentro
     dropdown.addEventListener('click', function(e) {
         e.stopPropagation();
     });
+    
+    // Control de QRs
+    document.querySelectorAll('.qr-container').forEach(container => {
+        // Mostrar/ocultar QR pequeño
+        container.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+        });
+        
+        // Mostrar QR grande al hacer clic en el QR pequeño
+        const qrImg = container.querySelector('.qr-code');
+        qrImg.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cryptoName = container.closest('.wallet-item').querySelector('.crypto-name').textContent;
+            modalImg.src = this.src;
+            modalName.textContent = cryptoName;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
+    // Cerrar modal
+    closeModal.addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    });
+    
+    // Cerrar al hacer clic fuera del modal
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // [Mantén el resto del código para copiar direcciones igual]
+});
     
     // Función mejorada para copiar direcciones
     document.querySelectorAll('.copy-btn').forEach(btn => {
