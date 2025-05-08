@@ -138,6 +138,7 @@ function debounce(func, wait) {
 // Formatear moneda
 function formatCurrency(value) {
     if (!value && value !== 0) return '--';
+    const digits = value < 1 ? 6 : 2;  // 6 decimales si <1, sino 2
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
