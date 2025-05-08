@@ -208,3 +208,34 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+// Función para copiar al portapapeles
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text)
+    .then(() => showCopyNotification())
+    .catch(err => console.error('Error al copiar:', err));
+}
+
+// Mostrar notificación
+function showCopyNotification() {
+  const notification = document.createElement('div');
+  notification.className = 'copy-notification show';
+  notification.textContent = '¡Dirección copiada!';
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+}
+
+// Asignar evento a todas las wallets
+document.querySelectorAll('.copy-wallet').forEach(wallet => {
+  wallet.addEventListener('click', function() {
+    const walletAddress = this.getAttribute('data-wallet');
+    copyToClipboard(walletAddress);
+    
+    // Feedback visual
+    this.classList.add('copied');
+    setTimeout(() => this.classList.remove('copied'), 1000);
+  });
+});
