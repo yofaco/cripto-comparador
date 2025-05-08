@@ -208,37 +208,3 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-/* Estilo para las direcciones clickeables */
-.copy-wallet {
-  cursor: pointer;
-  padding: 2px 5px;
-  border-radius: 3px;
-  transition: all 0.2s;
-}
-
-.copy-wallet:hover {
-  background-color: #f0f0f0;
-}
-
-.copy-wallet.copied {
-  background-color: #1a237e;
-  color: white;
-}
-
-/* Notificación de copiado */
-.copy-notification {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1a237e;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.copy-notification.show {
-  opacity: 1;
-}
